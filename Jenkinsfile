@@ -22,13 +22,10 @@ pipeline {
             }
         }
 
-        stage('Blue-Green Deploy') {
+        stage('Run Docker Container') {
             steps {
-                bat 'docker rm -f devops-container-new || exit 0'
-                bat 'docker run -d -p 8084:80 --name devops-container-new devops-task-manager:%BUILD_NUMBER%'
-                bat 'timeout /t 5'
                 bat 'docker rm -f devops-container || exit 0'
-                bat 'docker rename devops-container-new devops-container'
+                bat 'docker run -d -p 8083:80 --name devops-container devops-task-manager:%BUILD_NUMBER%'
             }
         }
 
@@ -41,10 +38,10 @@ pipeline {
 
     post {
         success {
-            echo 'Blue-Green deployment completed successfully.'
+            echo 'CI/CD pipeline completed successfully.'
         }
         failure {
-            echo 'Pipeline failed during deployment.'
+            echo 'CI/CD pipeline failed.'
         }
     }
 }

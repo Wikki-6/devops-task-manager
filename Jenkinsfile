@@ -22,16 +22,15 @@ pipeline {
             }
         }
 
-        stage('Deploy Container') {
+        stage('Run Docker Container') {
             steps {
                 bat 'docker rm -f devops-container || exit 0'
                 bat 'docker run -d -p 8083:80 --name devops-container devops-task-manager:%BUILD_NUMBER%'
             }
         }
 
-        stage('Cleanup Old Images') {
+        stage('Cleanup') {
             steps {
-                bat 'for /f %i in (''docker images devops-task-manager --format "{{.Repository}}:{{.Tag}}"'') do @echo %i'
                 bat 'docker image prune -f'
             }
         }

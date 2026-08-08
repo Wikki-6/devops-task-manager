@@ -27,10 +27,9 @@ jobs:
           echo "All required project files are present."
 
       - name: Verify HTML content
- - name: Verify HTML content
-  run: |
-    grep -q "My First DevOps App" index.html
-    echo "HTML content verified successfully."
+        run: |
+          grep -q "My First DevOps App" index.html
+          echo "HTML content verified successfully."
 
-- name: Display message
-  run: echo "GitHub Actions CI is working successfully!"
+      - name: Display message
+        run: echo "GitHub Actions CI is working successfully!"

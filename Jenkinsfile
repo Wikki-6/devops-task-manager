@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = 'devops-task-manager'
-        IMAGE_TAG = "${BUILD_NUMBER}"
-    }
-
     stages {
 
         stage('Checkout') {
@@ -23,14 +18,14 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
+                bat "docker build -t devops-task-manager:%BUILD_NUMBER% ."
             }
         }
 
         stage('Run Docker Container') {
             steps {
                 bat 'docker rm -f devops-container || exit 0'
-                bat 'docker run -d -p 8083:80 --name devops-container %IMAGE_NAME%:%IMAGE_TAG%'
+                bat "docker run -d -p 8083:80 --name devops-container devops-task-manager:%BUILD_NUMBER%"
             }
         }
     }

@@ -20,6 +20,11 @@ jobs:
         run: ls -la
 
       - name: Verify project files
+            - name: Verify HTML content
+        run: |
+          grep -q "DevOps Task Manager" index.html
+          echo "HTML content verified successfully."
+      
         run: |
           test -f index.html
           test -f style.css

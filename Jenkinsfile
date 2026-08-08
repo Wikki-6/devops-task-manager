@@ -22,20 +22,27 @@ pipeline {
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Deploy Container') {
             steps {
                 bat 'docker rm -f devops-container || exit 0'
                 bat 'docker run -d -p 8083:80 --name devops-container devops-task-manager:%BUILD_NUMBER%'
+            }
+        }
+
+        stage('Cleanup Old Images') {
+            steps {
+                bat 'for /f %i in (''docker images devops-task-manager --format "{{.Repository}}:{{.Tag}}"'') do @echo %i'
+                bat 'docker image prune -f'
             }
         }
     }
 
     post {
         success {
-            echo 'Pipeline executed successfully.'
+            echo 'CI/CD pipeline completed successfully.'
         }
         failure {
-            echo 'Pipeline failed.'
+            echo 'CI/CD pipeline failed.'
         }
     }
 }

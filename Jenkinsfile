@@ -32,11 +32,11 @@ pipeline {
 
     post {
         success {
-            echo 'Build and deployment successful!'
+            echo "Build #${env.BUILD_NUMBER} completed successfully!"
         }
 
         failure {
-            echo 'Pipeline failed.'
+            echo "Build failed. Check the console output."
         }
     }
 }

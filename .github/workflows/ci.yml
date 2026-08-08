@@ -20,16 +20,16 @@ jobs:
         run: ls -la
 
       - name: Verify project files
-            - name: Verify HTML content
-        run: |
-          grep -q "DevOps Task Manager" index.html
-          echo "HTML content verified successfully."
-      
         run: |
           test -f index.html
           test -f style.css
           test -f script.js
           echo "All required project files are present."
+
+      - name: Verify HTML content
+        run: |
+          grep -q "DevOps Task Manager" index.html
+          echo "HTML content verified successfully."
 
       - name: Display message
         run: echo "GitHub Actions CI is working successfully!"

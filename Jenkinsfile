@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = 'devops-task-manager'
-        IMAGE_TAG  = "${env.BUILD_NUMBER}"
+        IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -46,17 +46,20 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                bat 'kubectl apply -f k8s/deployment.yaml'
-                bat 'kubectl apply -f k8s/service.yaml'
+                bat '''
+                set KUBECONFIG=C:\\Users\\Vignesh\\.kube\\config
+                kubectl get nodes
+                kubectl apply -f k8s/deployment.yaml
+                kubectl apply -f k8s/service.yaml
+                '''
             }
         }
     }
 
     post {
         success {
-            echo 'Terraform + Docker + Kubernetes pipeline completed successfully.'
+            echo 'Pipeline completed successfully!'
         }
-
         failure {
             echo 'Pipeline failed.'
         }

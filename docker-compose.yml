@@ -1,0 +1,6 @@
+services:
+  web:
+    image: devops-task-manager
+    container_name: devops-compose
+    ports:
+      - "8081:80"

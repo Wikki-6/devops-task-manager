@@ -1,0 +1,88 @@
+node_modules/
+.env
+.env.local
+*.log
+.vscode/
+.DS_Store
+
+
+
+
+
+This is the difference between CI and CI/CD:
+
+CI (Continuous Integration): Test the code.
+
+CD (Continuous Deployment): Test the code and publish it automatically.
+
+
+The important thing to understand is:
+
+Git → tracks your changes.
+GitHub → stores your repository.
+CI → automatically checks/builds your code after the push.
+CD/Deployment → publishes the successful build to your website.
+You don't manually upload the website after each change.
+
+If your previous Git setup is already working, the next step is to make one small change to index.html, commit it, and push it to main. Then we'll watch GitHub Actions run the pipeline and verify the updated website.
+
+
+
+Your code
+   ↓
+Git
+(version control)
+   ↓
+GitHub
+(remote repository)
+   ↓
+GitHub Actions
+(automatically tests/builds)
+   ↓
+GitHub Pages
+(automatically publishes website)
+
+
+Component	What you did
+Git	You created commits and tracked changes
+GitHub	You pushed/stored your project repository
+GitHub Actions (CI)	GitHub automatically runs your workflow when you push/commit
+GitHub Pages (CD)	The updated website is automatically deployed/published
+
+
+
+What you did with Docker
+
+You ran:
+
+docker run -d -p 8080:80 --name devops-container devops-task-manager
+
+That starts one container.
+
+What you did with Docker Compose
+
+You created a docker-compose.yml file and ran:
+
+docker compose up -d
+
+Docker Compose read the YAML file and automatically created the container for you.
+
+For a real DevOps project, Compose becomes much more useful. Imagine your application needs:
+
+a web app,
+
+a MySQL database,
+
+a Redis cache.
+
+With Docker alone, you would run three separate docker run commands. With Docker Compose, you define all three services in one file and start everything with one command:
+
+docker compose up -d
+
+That’s why companies use Docker Compose for local development and testing environments.
+
+For interviews, a good one-line answer is:
+
+Docker runs containers; Docker Compose manages and orchestrates multiple containers using a YAML configuration file.
+
+Since you’ve finished GitHub, GitHub Actions, GitHub Pages, Docker, and Docker Compose, the next step I recommend is Jenkins CI/CD with Docker, because that’s the part that ties everything together into a real DevOps pipeline.

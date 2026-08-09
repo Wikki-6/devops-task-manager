@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-task-manager
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-task-manager
+  template:
+    metadata:
+      labels:
+        app: devops-task-manager
+    spec:
+      containers:
+      - name: devops-task-manager
+        image: devops-task-manager:17
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80

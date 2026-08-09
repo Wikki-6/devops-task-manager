@@ -1,0 +1,35 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show current directory
+        run: pwd
+
+      - name: List all files
+        run: ls -la
+
+      - name: Verify project files
+        run: |
+          test -f index.html
+          test -f style.css
+          test -f script.js
+          echo "All required project files are present."
+
+      - name: Verify HTML content
+        run: |
+          grep -q "My First DevOps App" index.html
+          echo "HTML content verified successfully."
+
+      - name: Display message
+        run: echo "GitHub Actions CI is working successfully!"

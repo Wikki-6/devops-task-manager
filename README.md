@@ -1,52 +1,87 @@
-\# DevOps Task Manager
+# DevOps task manager CI/CD pipeline
 
+## Project overview
 
+This project demonstrates a complete CI/CD pipeline using Jenkins, Docker, GitHub, and webhooks. Every code push to the GitHub repository automatically triggers a Jenkins pipeline that validates the application, builds a versioned Docker image, and deploys the latest container.
 
-A simple task manager project used for learning Git, GitHub, and DevOps practices.
+## Technologies used
 
+* Jenkins
+* Docker
+* GitHub
+* GitHub Webhooks
+* HTML
+* CSS
+* JavaScript
 
+## CI/CD workflow
 
-\## Project Files
+GitHub push -> GitHub webhook -> Jenkins pipeline -> Docker image build -> Docker container deployment
 
+## Jenkins pipeline stages
 
+### Checkout
 
-\- `index.html` - Application structure
+Jenkins pulls the latest code from the GitHub repository.
 
-\- `style.css` - Application styling
+### Test
 
-\- `script.js` - Application logic
+A basic validation step verifies that the application files are present.
 
+### Build Docker image
 
+A Docker image is created using the Jenkins build number as the image tag.
 
-\## Git Workflow
+Example:
 
+docker build -t devops-task-manager:17 .
 
+### Deploy container
+
+The previous container is removed and the latest versioned image is deployed.
+
+### Cleanup
+
+Unused Docker images are removed using Docker image pruning.
+
+## Docker image versioning
+
+Each Jenkins build generates a uniquely tagged Docker image.
+
+Example:
+
+devops-task-manager:15
+
+devops-task-manager:16
+
+devops-task-manager:17
+
+This enables traceability between Jenkins builds and deployed Docker images.
+
+## Automatic deployment
+
+GitHub webhooks are configured so that every commit to the main branch automatically triggers Jenkins.
+
+Deployment requires no manual intervention.
+
+## Application
+
+The application is accessible at:
+
+http://localhost:8083
+
+## Interview highlights
 
 This project demonstrates:
 
+* Continuous Integration
+* Continuous Deployment
+* Jenkins Pipeline as Code
+* Docker containerization
+* GitHub webhook automation
+* Image versioning
+* Automated deployment
 
+## Author
 
-\- Git repository initialization
-
-\- Git commits
-
-\- Git branches
-
-\- GitHub repository
-
-\- Remote repository configuration
-
-\- Git push
-
-\- `.gitignore`
-
-
-
-\## Author
-
-
-
-Vignesh Venkatesan
-
-fb038542a538429e88a2d0bf1758c190
-
+Vignesh

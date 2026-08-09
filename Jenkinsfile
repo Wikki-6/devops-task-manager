@@ -9,12 +9,23 @@ pipeline {
 
     stages {
 
+        /*
+         * ============================================================
+         * 1. CHECKOUT SOURCE CODE
+         * ============================================================
+         */
         stage('Checkout Code') {
             steps {
                 checkout scm
             }
         }
 
+
+        /*
+         * ============================================================
+         * 2. TERRAFORM INITIALIZATION
+         * ============================================================
+         */
         stage('Terraform Init') {
             steps {
                 dir('terraform') {
@@ -23,6 +34,12 @@ pipeline {
             }
         }
 
+
+        /*
+         * ============================================================
+         * 3. TERRAFORM VALIDATION
+         * ============================================================
+         */
         stage('Terraform Validate') {
             steps {
                 dir('terraform') {
@@ -31,6 +48,12 @@ pipeline {
             }
         }
 
+
+        /*
+         * ============================================================
+         * 4. TERRAFORM PLAN
+         * ============================================================
+         */
         stage('Terraform Plan') {
             steps {
                 dir('terraform') {
@@ -39,47 +62,95 @@ pipeline {
             }
         }
 
+
+        /*
+         * ============================================================
+         * 5. BUILD DOCKER IMAGE
+         * ============================================================
+         */
         stage('Build Docker Image') {
             steps {
                 bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
             }
         }
 
+
+        /*
+         * ============================================================
+         * 6. ANSIBLE DEPLOYMENT
+         *
+         * Jenkins runs on Windows.
+         * Ansible is installed inside WSL Ubuntu.
+         *
+         * Jenkins service MUST run under your Windows user account
+         * because WSL does not support LocalSystem.
+         * ============================================================
+         */
         stage('Ansible Deployment') {
             steps {
                 bat '''
-                    wsl bash -lc "cd /mnt/g/devops-task-manager/ansible && ansible-playbook -i inventory.ini deploy.yml"
+                    wsl.exe -d Ubuntu-24.04 -- bash -lc "cd /mnt/g/devops-task-manager/ansible && ansible-playbook -i inventory.ini deploy.yml"
                 '''
             }
         }
 
+
+        /*
+         * ============================================================
+         * 7. VERIFY KUBERNETES
+         * ============================================================
+         */
         stage('Verify Kubernetes') {
             steps {
                 bat '''
-                    wsl bash -lc "kubectl get nodes"
-                    wsl bash -lc "kubectl get pods -A"
-                    wsl bash -lc "kubectl get services -A"
+                    wsl.exe -d Ubuntu-24.04 -- bash -lc "kubectl get nodes"
+                    wsl.exe -d Ubuntu-24.04 -- bash -lc "kubectl get pods -A"
+                    wsl.exe -d Ubuntu-24.04 -- bash -lc "kubectl get services -A"
                 '''
             }
         }
     }
 
+
+    /*
+     * ================================================================
+     * POST BUILD
+     * ================================================================
+     */
     post {
 
         success {
-            echo '========================================'
-            echo '  DEVOPS PIPELINE COMPLETED SUCCESSFULLY'
-            echo '========================================'
-            echo 'Terraform: SUCCESS'
-            echo 'Docker: SUCCESS'
-            echo 'Ansible: SUCCESS'
-            echo 'Kubernetes: SUCCESS'
+            echo '''
+            ========================================================
+                    DEVOPS PIPELINE COMPLETED SUCCESSFULLY
+            ========================================================
+
+            CHECKOUT        : SUCCESS
+            TERRAFORM INIT   : SUCCESS
+            TERRAFORM VALID. : SUCCESS
+            TERRAFORM PLAN   : SUCCESS
+            DOCKER BUILD     : SUCCESS
+            ANSIBLE          : SUCCESS
+            KUBERNETES       : SUCCESS
+
+            ========================================================
+            '''
         }
 
         failure {
-            echo '========================================'
-            echo '  DEVOPS PIPELINE FAILED'
-            echo '========================================'
+            echo '''
+            ========================================================
+                    DEVOPS PIPELINE FAILED
+            ========================================================
+
+            Check the failed stage in the Jenkins console output.
+
+            ========================================================
+            '''
+        }
+
+        always {
+            echo "Pipeline execution completed."
         }
     }
 }

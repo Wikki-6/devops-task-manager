@@ -1,9 +1,10 @@
 pipeline {
+
     agent any
 
     environment {
         IMAGE_NAME = 'devops-task-manager'
-        IMAGE_TAG = "${BUILD_NUMBER}"
+        IMAGE_TAG  = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -44,24 +45,41 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Ansible Deployment') {
             steps {
                 bat '''
-                set KUBECONFIG=C:\\Users\\Vignesh\\.kube\\config
-                kubectl get nodes
-                kubectl apply -f k8s/deployment.yaml
-                kubectl apply -f k8s/service.yaml
+                    wsl bash -lc "cd /mnt/g/devops-task-manager/ansible && ansible-playbook -i inventory.ini deploy.yml"
+                '''
+            }
+        }
+
+        stage('Verify Kubernetes') {
+            steps {
+                bat '''
+                    wsl bash -lc "kubectl get nodes"
+                    wsl bash -lc "kubectl get pods -A"
+                    wsl bash -lc "kubectl get services -A"
                 '''
             }
         }
     }
 
     post {
+
         success {
-            echo 'Pipeline completed successfully!'
+            echo '========================================'
+            echo '  DEVOPS PIPELINE COMPLETED SUCCESSFULLY'
+            echo '========================================'
+            echo 'Terraform: SUCCESS'
+            echo 'Docker: SUCCESS'
+            echo 'Ansible: SUCCESS'
+            echo 'Kubernetes: SUCCESS'
         }
+
         failure {
-            echo 'Pipeline failed.'
+            echo '========================================'
+            echo '  DEVOPS PIPELINE FAILED'
+            echo '========================================'
         }
     }
 }

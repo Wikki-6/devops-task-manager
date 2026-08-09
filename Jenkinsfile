@@ -30,83 +30,94 @@ node {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DevOps Task Manager - Jenkins Build Report</title>
+<title>DevOps Task Manager - Jenkins Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Segoe UI, Arial, sans-serif;
+    font-family:'Poppins',sans-serif;
 }
 
 body{
-    background:#f3f6fb;
+    background:#eef2f7;
     color:#1f2937;
 }
 
 .header{
     background:linear-gradient(135deg,#0f172a,#1e3a8a);
     color:white;
-    padding:25px 35px;
+    padding:30px 40px;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    box-shadow:0 10px 25px rgba(0,0,0,.2);
 }
 
 .header h1{
     font-size:30px;
+    font-weight:700;
 }
 
-.status{
+.badge{
     background:#16a34a;
-    padding:10px 18px;
+    padding:12px 20px;
     border-radius:30px;
-    font-weight:bold;
+    font-weight:600;
+    font-size:14px;
 }
 
 .container{
-    width:90%;
-    max-width:1200px;
+    width:95%;
+    max-width:1400px;
     margin:30px auto;
 }
 
 .cards{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
     gap:20px;
 }
 
 .card{
     background:white;
-    border-radius:15px;
-    padding:20px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    transition:all .3s ease;
+}
+
+.card:hover{
+    transform:translateY(-5px);
 }
 
 .card h3{
     color:#64748b;
-    margin-bottom:10px;
     font-size:15px;
+    margin-bottom:12px;
 }
 
 .card .value{
-    font-size:30px;
-    font-weight:bold;
+    font-size:34px;
+    font-weight:700;
     color:#0f172a;
 }
 
 .section{
+    margin-top:30px;
     background:white;
-    border-radius:15px;
-    padding:25px;
-    margin-top:25px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+    border-radius:18px;
+    padding:30px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
 .section h2{
-    margin-bottom:20px;
+    margin-bottom:25px;
     color:#0f172a;
+    font-size:24px;
 }
 
 table{
@@ -115,25 +126,37 @@ table{
 }
 
 table td{
-    padding:14px;
+    padding:16px;
     border-bottom:1px solid #e5e7eb;
 }
 
 table td:first-child{
     width:35%;
     color:#64748b;
-    font-weight:bold;
+    font-weight:600;
 }
 
 .timeline{
     display:flex;
     justify-content:space-between;
-    margin-top:20px;
+    align-items:center;
+    margin-top:30px;
 }
 
 .stage{
     text-align:center;
     flex:1;
+    position:relative;
+}
+
+.stage:not(:last-child)::after{
+    content:'';
+    position:absolute;
+    top:25px;
+    left:60%;
+    width:80%;
+    height:4px;
+    background:#16a34a;
 }
 
 .circle{
@@ -143,32 +166,34 @@ table td:first-child{
     color:white;
     border-radius:50%;
     display:flex;
-    align-items:center;
     justify-content:center;
-    margin:0 auto 10px;
+    align-items:center;
+    margin:0 auto 12px;
     font-size:20px;
     font-weight:bold;
+    position:relative;
+    z-index:2;
 }
 
 .progress{
     width:100%;
-    height:14px;
+    height:12px;
     background:#e5e7eb;
     border-radius:20px;
     overflow:hidden;
-    margin-top:15px;
+    margin-top:12px;
 }
 
 .progress-bar{
     width:100%;
     height:100%;
-    background:#16a34a;
+    background:linear-gradient(90deg,#22c55e,#16a34a);
 }
 
 .footer{
     text-align:center;
     color:#64748b;
-    margin:40px 0;
+    padding:30px;
     font-size:14px;
 }
 </style>
@@ -178,7 +203,7 @@ table td:first-child{
 
 <div class="header">
     <h1>DevOps Task Manager - Jenkins Build Report</h1>
-    <div class="status">SUCCESS</div>
+    <div class="badge">SUCCESS</div>
 </div>
 
 <div class="container">
@@ -192,7 +217,7 @@ table td:first-child{
 
 <div class="card">
     <h3>Job Name</h3>
-    <div class="value" style="font-size:18px;">${env.JOB_NAME}</div>
+    <div class="value" style="font-size:20px">${env.JOB_NAME}</div>
 </div>
 
 <div class="card">
@@ -202,7 +227,7 @@ table td:first-child{
 
 <div class="card">
     <h3>Status</h3>
-    <div class="value" style="color:#16a34a;">SUCCESS</div>
+    <div class="value" style="color:#16a34a">SUCCESS</div>
 </div>
 
 </div>
@@ -262,7 +287,7 @@ Report
 <div class="progress-bar"></div>
 </div>
 
-<p style="margin-top:15px;color:#16a34a;font-weight:bold;">
+<p style="margin-top:15px;color:#16a34a;font-weight:600">
 100% Successful Build Execution
 </p>
 

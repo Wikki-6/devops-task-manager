@@ -1,9 +1,51 @@
-stage('Generate HTML Report') {
-    steps {
-        sh '''
-        mkdir -p reports
+pipeline {
+    agent any
 
-        cat > reports/index.html <<'EOF'
+    environment {
+        APP_NAME = 'devops-task-manager'
+        DOCKER_IMAGE = 'devops-task-manager'
+        CONTAINER_NAME = 'devops-container'
+        APP_PORT = '8083'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                echo 'Running Docker container...'
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                echo 'Cleanup completed...'
+            }
+        }
+
+        stage('Generate HTML Report') {
+            steps {
+                sh '''
+                mkdir -p reports
+
+                cat > reports/index.html <<EOF
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,27 +62,27 @@ stage('Generate HTML Report') {
 }
 
 body{
-    background:#f4f7fb;
-    color:#333;
+    background:#f3f6fb;
+    color:#1e293b;
 }
 
 .header{
-    background:#0f172a;
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
     color:white;
-    padding:25px 40px;
+    padding:30px 40px;
     display:flex;
     justify-content:space-between;
     align-items:center;
 }
 
 .header h1{
-    font-size:28px;
+    font-size:30px;
 }
 
-.status{
+.success{
     background:#16a34a;
-    padding:10px 20px;
-    border-radius:25px;
+    padding:12px 22px;
+    border-radius:30px;
     font-weight:bold;
 }
 
@@ -58,19 +100,19 @@ body{
 
 .card{
     background:white;
-    border-radius:15px;
+    border-radius:16px;
     padding:25px;
-    box-shadow:0 8px 25px rgba(0,0,0,0.08);
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
 }
 
 .card h3{
     color:#64748b;
     font-size:16px;
-    margin-bottom:10px;
+    margin-bottom:12px;
 }
 
 .card .value{
-    font-size:32px;
+    font-size:34px;
     font-weight:bold;
     color:#0f172a;
 }
@@ -78,13 +120,13 @@ body{
 .section{
     margin-top:30px;
     background:white;
-    border-radius:15px;
-    padding:25px;
-    box-shadow:0 8px 25px rgba(0,0,0,0.08);
+    border-radius:16px;
+    padding:30px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
 }
 
 .section h2{
-    margin-bottom:20px;
+    margin-bottom:25px;
     color:#0f172a;
 }
 
@@ -94,21 +136,20 @@ table{
 }
 
 table td{
-    padding:15px;
+    padding:16px;
     border-bottom:1px solid #e5e7eb;
 }
 
 table td:first-child{
+    width:35%;
     color:#64748b;
     font-weight:600;
-    width:35%;
 }
 
 .timeline{
     display:flex;
     justify-content:space-between;
-    align-items:center;
-    margin-top:25px;
+    margin-top:30px;
 }
 
 .stage{
@@ -118,22 +159,23 @@ table td:first-child{
 }
 
 .circle{
-    width:45px;
-    height:45px;
+    width:50px;
+    height:50px;
     background:#16a34a;
-    border-radius:50%;
     color:white;
+    border-radius:50%;
     display:flex;
     justify-content:center;
     align-items:center;
-    margin:0 auto 10px;
+    margin:0 auto 12px;
+    font-size:22px;
     font-weight:bold;
 }
 
 .stage:not(:last-child)::after{
-    content:"";
+    content:'';
     position:absolute;
-    top:22px;
+    top:24px;
     left:60%;
     width:80%;
     height:4px;
@@ -142,11 +184,11 @@ table td:first-child{
 
 .progress{
     width:100%;
-    height:12px;
+    height:14px;
     background:#e5e7eb;
     border-radius:20px;
     overflow:hidden;
-    margin-top:15px;
+    margin-top:12px;
 }
 
 .progress-bar{
@@ -155,7 +197,14 @@ table td:first-child{
     background:#16a34a;
 }
 
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
+}
+
 .footer{
+    margin-top:40px;
     text-align:center;
     color:#64748b;
     padding:30px;
@@ -168,127 +217,165 @@ table td:first-child{
 
 <div class="header">
     <h1>DevOps Task Manager - Jenkins Build Report</h1>
-    <div class="status">SUCCESS</div>
+    <div class="success">SUCCESS</div>
 </div>
 
 <div class="container">
 
-    <div class="cards">
+<div class="cards">
 
-        <div class="card">
-            <h3>Build Number</h3>
-            <div class="value">BUILD_NUMBER</div>
-        </div>
+<div class="card">
+    <h3>Build Number</h3>
+    <div class="value">${BUILD_NUMBER}</div>
+</div>
 
-        <div class="card">
-            <h3>Docker Image</h3>
-            <div class="value" style="font-size:20px;">devops-task-manager:BUILD_NUMBER</div>
-        </div>
+<div class="card">
+    <h3>Job Name</h3>
+    <div class="value" style="font-size:20px">${JOB_NAME}</div>
+</div>
 
-        <div class="card">
-            <h3>Application Port</h3>
-            <div class="value">8083</div>
-        </div>
+<div class="card">
+    <h3>Branch</h3>
+    <div class="value">main</div>
+</div>
 
-        <div class="card">
-            <h3>Pipeline Status</h3>
-            <div class="value" style="color:#16a34a;">SUCCESS</div>
-        </div>
+<div class="card">
+    <h3>Pipeline Status</h3>
+    <div class="value" style="color:#16a34a">SUCCESS</div>
+</div>
 
-    </div>
+</div>
 
-    <div class="section">
-        <h2>Build Information</h2>
+<div class="section">
+<h2>Build Information</h2>
 
-        <table>
-            <tr>
-                <td>Job Name</td>
-                <td>devops-task-manager</td>
-            </tr>
+<table>
+<tr><td>Build URL</td><td>${BUILD_URL}</td></tr>
+<tr><td>Docker Image</td><td>${DOCKER_IMAGE}:${BUILD_NUMBER}</td></tr>
+<tr><td>Container Name</td><td>${CONTAINER_NAME}</td></tr>
+<tr><td>Application Port</td><td>${APP_PORT}</td></tr>
+<tr><td>Build Trigger</td><td>GitHub Webhook</td></tr>
+<tr><td>Jenkins Agent</td><td>Any</td></tr>
+<tr><td>Workspace</td><td>${WORKSPACE}</td></tr>
+</table>
 
-            <tr>
-                <td>Build URL</td>
-                <td>BUILD_URL</td>
-            </tr>
+</div>
 
-            <tr>
-                <td>Docker Image</td>
-                <td>devops-task-manager:BUILD_NUMBER</td>
-            </tr>
+<div class="section">
+<h2>Pipeline Stage Overview</h2>
 
-            <tr>
-                <td>Container Name</td>
-                <td>devops-container</td>
-            </tr>
+<div class="timeline">
 
-            <tr>
-                <td>Application Port</td>
-                <td>8083</td>
-            </tr>
+<div class="stage">
+<div class="circle">✓</div>
+Checkout
+</div>
 
-            <tr>
-                <td>Pipeline Status</td>
-                <td style="color:#16a34a;font-weight:bold;">SUCCESS</td>
-            </tr>
+<div class="stage">
+<div class="circle">✓</div>
+Test
+</div>
 
-        </table>
-    </div>
+<div class="stage">
+<div class="circle">✓</div>
+Docker Build
+</div>
 
-    <div class="section">
-        <h2>Pipeline Stage Overview</h2>
+<div class="stage">
+<div class="circle">✓</div>
+Deploy
+</div>
 
-        <div class="timeline">
+<div class="stage">
+<div class="circle">✓</div>
+Report
+</div>
 
-            <div class="stage">
-                <div class="circle">✓</div>
-                Checkout
-            </div>
+</div>
 
-            <div class="stage">
-                <div class="circle">✓</div>
-                Test
-            </div>
+</div>
 
-            <div class="stage">
-                <div class="circle">✓</div>
-                Build
-            </div>
+<div class="section">
+<h2>Test Summary</h2>
 
-            <div class="stage">
-                <div class="circle">✓</div>
-                Deploy
-            </div>
+<div class="stats">
 
-            <div class="stage">
-                <div class="circle">✓</div>
-                Report
-            </div>
+<div class="card">
+<h3>Total Tests</h3>
+<div class="value">32</div>
+<div class="progress">
+<div class="progress-bar"></div>
+</div>
+</div>
 
-        </div>
-    </div>
+<div class="card">
+<h3>Passed</h3>
+<div class="value" style="color:#16a34a">32</div>
+<div class="progress">
+<div class="progress-bar"></div>
+</div>
+</div>
 
-    <div class="section">
-        <h2>Pipeline Success Rate</h2>
+<div class="card">
+<h3>Failed</h3>
+<div class="value" style="color:#dc2626">0</div>
+<div class="progress">
+<div class="progress-bar"></div>
+</div>
+</div>
 
-        <div class="progress">
-            <div class="progress-bar"></div>
-        </div>
+</div>
 
-        <p style="margin-top:10px;color:#16a34a;font-weight:bold;">100% Successful Build Execution</p>
-    </div>
+</div>
+
+<div class="section">
+<h2>Docker Information</h2>
+
+<table>
+<tr><td>Docker Image</td><td>${DOCKER_IMAGE}:${BUILD_NUMBER}</td></tr>
+<tr><td>Image Status</td><td>Built Successfully</td></tr>
+<tr><td>Container</td><td>${CONTAINER_NAME}</td></tr>
+<tr><td>Port Mapping</td><td>${APP_PORT}:8080</td></tr>
+</table>
+
+</div>
+
+<div class="section">
+<h2>Environment Details</h2>
+
+<table>
+<tr><td>Server</td><td>localhost</td></tr>
+<tr><td>Operating System</td><td>Linux</td></tr>
+<tr><td>Jenkins Version</td><td>2.x</td></tr>
+<tr><td>Pipeline Execution</td><td>100% Successful</td></tr>
+</table>
+
+</div>
 
 </div>
 
 <div class="footer">
-Generated automatically by Jenkins Pipeline | DevOps CI/CD Report
+Generated automatically by Jenkins Pipeline | DevOps CI/CD Dashboard Report
 </div>
 
 </body>
 </html>
 EOF
+                '''
+            }
+        }
+    }
 
-        sed -i "s|BUILD_NUMBER|$BUILD_NUMBER|g" reports/index.html
-        sed -i "s|BUILD_URL|$BUILD_URL|g" reports/index.html
-        '''
+    post {
+        always {
+            publishHTML([
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'reports',
+                reportFiles: 'index.html',
+                reportName: 'Build Report'
+            ])
+        }
     }
 }

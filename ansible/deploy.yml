@@ -1,37 +1,38 @@
 ---
-- name: Deploy DevOps Task Manager
+
+* name: Deploy DevOps Task Manager
   hosts: localhost
   connection: local
   gather_facts: yes
 
   tasks:
 
-    - name: Check Docker
-      shell: docker ps
-      register: docker_output
+  * name: Check Docker
+    shell: docker ps
+    register: docker_output
 
-    - name: Show Docker output
-      debug:
-        var: docker_output.stdout_lines
+  * name: Show Docker output
+    debug:
+    var: docker_output.stdout_lines
 
-    - name: Check Kubernetes
-      shell: /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "kubectl get nodes"
-      register: kube_output
+  * name: Check Kubernetes
+    shell: /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "kubectl get nodes"
+    register: kube_output
 
-    - name: Show Kubernetes output
-      debug:
-        var: kube_output.stdout_lines
+  * name: Show Kubernetes output
+    debug:
+    var: kube_output.stdout_lines
 
-    - name: Apply Kubernetes deployment
-      shell: /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "kubectl apply -f /mnt/g/devops-task-manager/k8s/deployment.yaml"
+  * name: Apply Kubernetes deployment
+    shell: /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "kubectl apply -f G:\devops-task-manager\k8s\deployment.yaml"
 
-    - name: Apply Kubernetes service
-      shell: /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "kubectl apply -f /mnt/g/devops-task-manager/k8s/service.yaml"
+  * name: Apply Kubernetes service
+    shell: /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "kubectl apply -f G:\devops-task-manager\k8s\service.yaml"
 
-    - name: Verify pods
-      shell: /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "kubectl get pods"
-      register: pods_output
+  * name: Verify pods
+    shell: /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "kubectl get pods"
+    register: pods_output
 
-    - name: Show pod status
-      debug:
-        var: pods_output.stdout_lines
+  * name: Show pod status
+    debug:
+    var: pods_output.stdout_lines

@@ -1,10 +1,8 @@
 pipeline {
-
     agent any
 
     environment {
         IMAGE_NAME = 'devops-task-manager'
-        IMAGE_TAG  = "${BUILD_NUMBER}"
         IMAGE_TAG  = "${BUILD_NUMBER}"
     }
 
@@ -21,7 +19,6 @@ pipeline {
             }
         }
 
-
         /*
          * ============================================================
          * 2. TERRAFORM INITIALIZATION
@@ -35,7 +32,6 @@ pipeline {
             }
         }
 
-
         /*
          * ============================================================
          * 3. TERRAFORM VALIDATION
@@ -48,7 +44,6 @@ pipeline {
                 }
             }
         }
-
 
         /*
          * ============================================================
@@ -71,7 +66,6 @@ pipeline {
             }
         }
 
-
         /*
          * ============================================================
          * 5. BUILD DOCKER IMAGE
@@ -83,26 +77,18 @@ pipeline {
             }
         }
 
-
         /*
          * ============================================================
          * 6. ANSIBLE DEPLOYMENT
-         *
-         * Jenkins runs on Windows.
-         * Ansible is installed inside WSL Ubuntu.
-         *
-         * Jenkins service MUST run under your Windows user account
-         * because WSL does not support LocalSystem.
          * ============================================================
          */
         stage('Ansible Deployment') {
             steps {
                 bat '''
-                    wsl.exe -d Ubuntu-24.04 -- bash -lc "cd /mnt/g/devops-task-manager/ansible && ansible-playbook -i inventory.ini deploy.yml"
+                wsl.exe -d Ubuntu-24.04 -- bash -lc "cd /mnt/g/devops-task-manager/ansible && ansible-playbook -i inventory.ini deploy.yml"
                 '''
             }
         }
-
 
         /*
          * ============================================================
@@ -112,9 +98,9 @@ pipeline {
         stage('Verify Kubernetes') {
             steps {
                 bat '''
-                    wsl.exe -d Ubuntu-24.04 -- bash -lc "kubectl get nodes"
-                    wsl.exe -d Ubuntu-24.04 -- bash -lc "kubectl get pods -A"
-                    wsl.exe -d Ubuntu-24.04 -- bash -lc "kubectl get services -A"
+                wsl.exe -d Ubuntu-24.04 -- bash -lc "kubectl get nodes"
+                wsl.exe -d Ubuntu-24.04 -- bash -lc "kubectl get pods -A"
+                wsl.exe -d Ubuntu-24.04 -- bash -lc "kubectl get services -A"
                 '''
             }
         }
@@ -131,7 +117,6 @@ pipeline {
         }
     }
 
-
     /*
      * ================================================================
      * POST BUILD
@@ -146,10 +131,11 @@ pipeline {
                     DEVOPS PIPELINE COMPLETED SUCCESSFULLY
             ========================================================
 
-            CHECKOUT        : SUCCESS
+            CHECKOUT         : SUCCESS
             TERRAFORM INIT   : SUCCESS
             TERRAFORM VALID. : SUCCESS
             TERRAFORM PLAN   : SUCCESS
+            TERRAFORM APPLY  : SUCCESS
             DOCKER BUILD     : SUCCESS
             ANSIBLE          : SUCCESS
             KUBERNETES       : SUCCESS
@@ -160,9 +146,6 @@ pipeline {
 
         failure {
             echo 'Pipeline failed. Check the console output for errors.'
-        }
-        always {
-            echo "Build Number: ${BUILD_NUMBER}"
             echo '''
             ========================================================
                     DEVOPS PIPELINE FAILED
@@ -175,6 +158,7 @@ pipeline {
         }
 
         always {
+            echo "Build Number: ${BUILD_NUMBER}"
             echo "Pipeline execution completed."
         }
     }

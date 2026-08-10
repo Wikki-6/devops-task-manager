@@ -8,22 +8,12 @@ pipeline {
 
     stages {
 
-        /*
-         * ============================================================
-         * 1. CHECKOUT SOURCE CODE
-         * ============================================================
-         */
         stage('Checkout Code') {
             steps {
                 checkout scm
             }
         }
 
-        /*
-         * ============================================================
-         * 2. TERRAFORM INITIALIZATION
-         * ============================================================
-         */
         stage('Terraform Init') {
             steps {
                 dir('terraform') {
@@ -32,11 +22,6 @@ pipeline {
             }
         }
 
-        /*
-         * ============================================================
-         * 3. TERRAFORM VALIDATION
-         * ============================================================
-         */
         stage('Terraform Validate') {
             steps {
                 dir('terraform') {
@@ -45,11 +30,6 @@ pipeline {
             }
         }
 
-        /*
-         * ============================================================
-         * 4. TERRAFORM PLAN
-         * ============================================================
-         */
         stage('Terraform Plan') {
             steps {
                 dir('terraform') {
@@ -66,22 +46,12 @@ pipeline {
             }
         }
 
-        /*
-         * ============================================================
-         * 5. BUILD DOCKER IMAGE
-         * ============================================================
-         */
         stage('Build Docker Image') {
             steps {
                 bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
             }
         }
 
-        /*
-         * ============================================================
-         * 6. ANSIBLE DEPLOYMENT
-         * ============================================================
-         */
         stage('Ansible Deployment') {
             steps {
                 bat '''
@@ -90,17 +60,12 @@ pipeline {
             }
         }
 
-        /*
-         * ============================================================
-         * 7. VERIFY KUBERNETES
-         * ============================================================
-         */
         stage('Verify Kubernetes') {
             steps {
                 bat '''
-                wsl.exe -d Ubuntu-24.04 -- bash -lc "kubectl get nodes"
-                wsl.exe -d Ubuntu-24.04 -- bash -lc "kubectl get pods -A"
-                wsl.exe -d Ubuntu-24.04 -- bash -lc "kubectl get services -A"
+                kubectl get nodes
+                kubectl get pods -A
+                kubectl get services -A
                 '''
             }
         }
@@ -108,7 +73,6 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 bat '''
-                set KUBECONFIG=C:\\Users\\Vignesh\\.kube\\config
                 kubectl get deployments
                 kubectl get pods
                 kubectl get services
@@ -117,13 +81,7 @@ pipeline {
         }
     }
 
-    /*
-     * ================================================================
-     * POST BUILD
-     * ================================================================
-     */
     post {
-
         success {
             echo 'DevOps pipeline completed successfully!'
             echo '''
@@ -159,7 +117,7 @@ pipeline {
 
         always {
             echo "Build Number: ${BUILD_NUMBER}"
-            echo "Pipeline execution completed."
+            echo 'Pipeline execution completed.'
         }
     }
 }

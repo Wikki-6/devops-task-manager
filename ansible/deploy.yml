@@ -1,20 +1,37 @@
 ---
 - name: Deploy DevOps Task Manager
-  hosts: local
-  become: no
+  hosts: localhost
+  connection: local
+  gather_facts: yes
 
   tasks:
+
     - name: Check Docker
-      command: docker --version
+      shell: docker ps
+      register: docker_output
+
+    - name: Show Docker output
+      debug:
+        var: docker_output.stdout_lines
 
     - name: Check Kubernetes
-      command: kubectl get nodes
+      shell: /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "kubectl get nodes"
+      register: kube_output
 
-    - name: Deploy application
-      command: kubectl apply -f ../k8s/deployment.yaml
+    - name: Show Kubernetes output
+      debug:
+        var: kube_output.stdout_lines
 
-    - name: Deploy service
-      command: kubectl apply -f ../k8s/service.yaml
+    - name: Apply Kubernetes deployment
+      shell: /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "kubectl apply -f /mnt/g/devops-task-manager/k8s/deployment.yaml"
 
-    - name: Verify deployment
-      command: kubectl get pods
+    - name: Apply Kubernetes service
+      shell: /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "kubectl apply -f /mnt/g/devops-task-manager/k8s/service.yaml"
+
+    - name: Verify pods
+      shell: /mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command "kubectl get pods"
+      register: pods_output
+
+    - name: Show pod status
+      debug:
+        var: pods_output.stdout_lines

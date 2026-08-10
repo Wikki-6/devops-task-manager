@@ -5,6 +5,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'devops-task-manager'
         IMAGE_TAG  = "${BUILD_NUMBER}"
+        IMAGE_TAG  = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -62,6 +63,14 @@ pipeline {
             }
         }
 
+        stage('Terraform Apply') {
+            steps {
+                dir('terraform') {
+                    bat 'terraform apply -auto-approve'
+                }
+            }
+        }
+
 
         /*
          * ============================================================
@@ -109,6 +118,17 @@ pipeline {
                 '''
             }
         }
+
+        stage('Verify Deployment') {
+            steps {
+                bat '''
+                set KUBECONFIG=C:\\Users\\Vignesh\\.kube\\config
+                kubectl get deployments
+                kubectl get pods
+                kubectl get services
+                '''
+            }
+        }
     }
 
 
@@ -120,6 +140,7 @@ pipeline {
     post {
 
         success {
+            echo 'DevOps pipeline completed successfully!'
             echo '''
             ========================================================
                     DEVOPS PIPELINE COMPLETED SUCCESSFULLY
@@ -138,6 +159,10 @@ pipeline {
         }
 
         failure {
+            echo 'Pipeline failed. Check the console output for errors.'
+        }
+        always {
+            echo "Build Number: ${BUILD_NUMBER}"
             echo '''
             ========================================================
                     DEVOPS PIPELINE FAILED

@@ -1,0 +1,24 @@
+---
+- name: Configure DevOps Task Manager
+  hosts: local
+  gather_facts: false
+
+  tasks:
+    - name: Verify Ansible is working
+      ansible.builtin.debug:
+        msg: "Ansible is working successfully!"
+
+    - name: Create application directory
+      ansible.builtin.file:
+        path: /tmp/devops-task-manager
+        state: directory
+        mode: '0755'
+
+    - name: Create application status file
+      ansible.builtin.copy:
+        content: |
+          DevOps Task Manager
+          Environment: Development
+          Managed by Ansible
+        dest: /tmp/devops-task-manager/status.txt
+        mode: '0644'

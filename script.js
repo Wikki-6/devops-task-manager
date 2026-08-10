@@ -1,10 +1,13 @@
 function addTask() {
 
-    const input = document.getElementById("taskInput");
-    const taskText = input.value;
+    const nameInput = document.getElementById("nameInput");
+    const taskInput = document.getElementById("taskInput");
 
-    if (taskText === "") {
-        alert("Please enter a task");
+    const name = nameInput.value.trim();
+    const taskText = taskInput.value.trim();
+
+    if (name === "" || taskText === "") {
+        alert("Please enter both name and task");
         return;
     }
 
@@ -12,9 +15,15 @@ function addTask() {
 
     const task = document.createElement("li");
 
-    task.textContent = taskText;
+    task.innerHTML = `
+        <strong>Name:</strong> ${name}<br>
+        <strong>Task:</strong> ${taskText}
+    `;
 
     list.appendChild(task);
 
-    input.value = "";
+    nameInput.value = "";
+    taskInput.value = "";
+
+    nameInput.focus();
 }

@@ -1,0 +1,20 @@
+---
+- name: Deploy DevOps Task Manager
+  hosts: local
+  become: no
+
+  tasks:
+    - name: Check Docker
+      command: docker --version
+
+    - name: Check Kubernetes
+      command: kubectl get nodes
+
+    - name: Deploy application
+      command: kubectl apply -f ../k8s/deployment.yaml
+
+    - name: Deploy service
+      command: kubectl apply -f ../k8s/service.yaml
+
+    - name: Verify deployment
+      command: kubectl get pods

@@ -1,3 +1,7 @@
 output "project_name" {
-  value = var.app_name
+  value = "devops-task-manager"
+}
+
+output "environment" {
+  value = var.environment
 }
